@@ -1,12 +1,19 @@
 {
-  "name": "blocksight-postgres",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+	"name": "blocksight-postgres",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"start": "docker compose up",
+		"stop": "docker compose down",
+		"containers": "docker container ls",
+		"ip": "docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}'",
+		"bash": "docker exec -it postgres bash"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"prettier": "^2.3.0"
+	}
 }
