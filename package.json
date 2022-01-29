@@ -4,11 +4,8 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"start": "docker compose up",
-		"stop": "docker compose down",
-		"containers": "docker container ls",
-		"ip": "docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}'",
-		"bash": "docker exec -it postgres bash"
+		"deploy:local:k8s": "kubectl apply -f postgres-configmap.yaml && kubectl apply -f postgres-persistentvolumeclaim.yaml && kubectl apply -f postgres-deployment.yaml",
+		"view:k8s": "kubectl get all && kubectl get configmap && kubectl get persistentvolumeclaim"
 	},
 	"keywords": [],
 	"author": "",

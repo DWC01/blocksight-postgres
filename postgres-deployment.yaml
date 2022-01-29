@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+# part 1: metadata (contains labels)
+metadata:
+  name: postgres-deployment
+  labels:
+    app: postgres
+    name: postgres-deployment
+# part 2: specification (contains selectors)
+spec:
+  replicas: 1
+  selector:
+    # make connection with matchLabels
+    # so deployment knows which pods belong to it
+    matchLabels:
+      app: postgres
+  strategy:
+    type: Recreate
+  # pod configuration
+  template:
+    # part 1: metadata (contains labels)
+    metadata:
+      labels:
+        app: postgres
+     # part 2: specification (contains selectors)
+    spec:
+      restartPolicy: Always
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: postgres-data
+      containers:
+      - name: postgres
+        image: postgres:13
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: postgres-data
+        env:
+          - name: DATABASE_URL
+            valueFrom:
+              configMapKeyRef:
+                name: postgres-configmap
+                key: DATABASE_URL
+          - name: POSTGRES_DB
+            valueFrom:
+              configMapKeyRef:
+                name: postgres-configmap
+                key: POSTGRES_DB
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              configMapKeyRef:
+                name: postgres-configmap
+                key: POSTGRES_PASSWORD
+          - name: POSTGRES_USER
+            valueFrom:
+              configMapKeyRef:
+                name: postgres-configmap
+                key: POSTGRES_USER
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+  labels:
+    app: postgres
+    name: postgres-service
+spec:
+  ports:
+    - protocol: TCP
+      port: 5432 # Service Port
+      targetPort: 5432 # Container Port -> containerPort
+  selector:
+    app: postgres
